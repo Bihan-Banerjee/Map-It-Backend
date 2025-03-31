@@ -1,26 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
+const authenticate = require('../middleware/authenticate');
 
-router.post('/save-data', async (req, res) => {
+
+router.post('/save-data', authenticate, async (req, res) => {
   try {
     const { visitedCities, visitedCountries, statistics } = req.body;
-    const user = new User({
-      visitedCities,
-      visitedCountries,
-      statistics,
-    });
-    await user.save();
+    
+    
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { visitedCities, visitedCountries, statistics },
+      { new: true }
+    );
+    
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ message: 'Failed to save data' });
   }
 });
 
-router.get('/get-data', async (req, res) => {
+
+router.get('/get-data', authenticate, async (req, res) => {
   try {
-    const users = await User.find();
-    res.json(users);
+    const user = await User.findById(req.user.id);
+    res.json(user);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch data' });
   }
