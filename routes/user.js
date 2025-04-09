@@ -21,6 +21,15 @@ router.post('/save-data', authenticate, async (req, res) => {
   }
 });
 
+router.get('/get-username', authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    res.json({ username: user.username });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch username' });
+  }
+});
+
 
 router.get('/get-data', authenticate, async (req, res) => {
   try {
