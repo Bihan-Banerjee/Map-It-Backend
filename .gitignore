@@ -1,0 +1,42 @@
+# OS/System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Dependency directories
+node_modules/
+bower_components/
+vendor/
+
+# Build output
+dist/
+build/
+out/
+
+# Test coverage
+coverage/
+
+# Parcel cache
+.cache/
+
+# Vite cache
+.vite/
+
+# Next.js
+.next/
+
+# SvelteKit
+.svelte-kit/
