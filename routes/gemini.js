@@ -10,7 +10,7 @@ router.post("/analyze", async (req, res) => {
     const { prompt } = req.body;
     console.log("Received prompt:", prompt);
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-2.5-flash" });
 
     const result = await model.generateContent([prompt]);
     const response = result.response;

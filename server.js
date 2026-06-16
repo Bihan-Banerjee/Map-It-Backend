@@ -5,19 +5,27 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const allowedOrigins = (process.env.CORS_ORIGINS ||
+  "http://localhost:5173,https://map-it-9g3b.vercel.app")
+  .split(",")
+  .map((o) => o.trim());
+
+// Allow the explicit allowlist plus any localhost/127.0.0.1 port for local dev.
+const isLocalhost = (origin) =>
+  /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+
 app.use(cors({
-  origin: ["http://localhost:5173","https://map-it-9g3b.vercel.app"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: (origin, cb) => {
+    if (!origin || isLocalhost(origin) || allowedOrigins.includes(origin)) {
+      return cb(null, true);
+    }
+    return cb(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
 }));
 
-app.use(express.json()); 
-
-app.use((req, res, next) => {
-  console.log("Request Origin:", req.headers.origin);
-  console.log("Request Method:", req.method);
-  next();
-});
+app.use(express.json());
 
 const geminiRoutes = require("./routes/gemini");
 app.use("/api/gemini", geminiRoutes);
@@ -28,10 +36,8 @@ app.use('/api', userDataRoutes);
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Could not connect to MongoDB', err));
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-app.options("*", cors());

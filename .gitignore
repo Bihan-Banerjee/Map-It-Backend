@@ -11,10 +11,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment variables
+# Environment variables (never commit secrets / API keys)
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+
+# Claude Code / agent tooling
+.claude/
+CLAUDE.local.md
 
 # Dependency directories
 node_modules/
